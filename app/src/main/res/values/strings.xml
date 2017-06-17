@@ -3,4 +3,5 @@
     <string name="sorting">SORTING</string>
     <string name="sort_by_popularity">Popular</string>
     <string name="sort_by_highest_rated">Highest-rated</string>
+    <string name="refresh">Refresh</string>
 </resources>

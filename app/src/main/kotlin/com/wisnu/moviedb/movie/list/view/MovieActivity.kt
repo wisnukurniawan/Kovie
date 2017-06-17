@@ -23,6 +23,7 @@ class MovieActivity : AppCompatActivity() {
 
     private val TAG = MovieActivity::class.java.simpleName
     private val movieListPresenter by lazy { MovieApplication.movieComponent.provideMovieListPresenter() }
+    private var recentSorting = MovieSorting.BY_POPULARITY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,6 @@ class MovieActivity : AppCompatActivity() {
 
     private fun showPopularMovies() {
         Observable.just(true)
-            .observeOn(AndroidSchedulers.mainThread())
             .observeOn(Schedulers.io())
             .flatMap {
                 movieListPresenter.retrieveDiscoverMovies(MovieSorting.BY_POPULARITY)
@@ -53,15 +53,13 @@ class MovieActivity : AppCompatActivity() {
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
                 },
-                { Log.d(TAG, "onError showPopularMovies") }
-                ,
+                { Log.d(TAG, "onError showPopularMovies") },
                 { Log.d(TAG, "onComplete showPopularMovies") }
             )
     }
 
     private fun showHighestRatedMovies() {
         Observable.just(true)
-            .observeOn(AndroidSchedulers.mainThread())
             .observeOn(Schedulers.io())
             .flatMap {
                 movieListPresenter.retrieveDiscoverMovies(MovieSorting.BY_HIGHEST_RATED)
@@ -75,8 +73,7 @@ class MovieActivity : AppCompatActivity() {
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
                 },
-                { Log.d(TAG, "onError showHighestRatedMovies") }
-                ,
+                { Log.d(TAG, "onError showHighestRatedMovies") },
                 { Log.d(TAG, "onComplete showHighestRatedMovies") }
             )
     }
@@ -95,10 +92,41 @@ class MovieActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         when (item?.itemId) {
-            R.id.sort_by_popularity -> showPopularMovies()
-            R.id.sort_highest_rated -> showHighestRatedMovies()
+            R.id.sort_by_popularity -> {
+                showPopularMovies()
+                recentSorting = MovieSorting.BY_POPULARITY
+            }
+
+            R.id.sort_highest_rated -> {
+                showHighestRatedMovies()
+                recentSorting = MovieSorting.BY_HIGHEST_RATED
+            }
+
+            R.id.refresh_movie -> {
+                refreshMovie()
+            }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun refreshMovie() {
+        Observable.just(true)
+            .observeOn(Schedulers.io())
+            .flatMap {
+                movieListPresenter.retrieveDiscoverMovies(recentSorting)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorResumeNext(Function { Observable.just(null) })
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    Log.d(TAG, "doOnNext refreshMovie")
+
+                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                },
+                { Log.d(TAG, "onError refreshMovie") },
+                { Log.d(TAG, "onComplete refreshMovie") }
+            )
     }
 }
