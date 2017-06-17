@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="movie_item_offset">4dp</dimen>
+
+    <integer name="movies_columns">2</integer>
+
+</resources>
