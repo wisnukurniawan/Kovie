@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="@dimen/movie_item_offset">
 
@@ -18,16 +18,16 @@
                 android:id="@+id/poster_path_iv"
                 android:layout_width="220dp"
                 android:layout_height="320dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
             <TextView
                 android:id="@+id/original_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:paddingTop="16dp"
+                android:paddingBottom="@dimen/medium_padding"
+                android:paddingTop="@dimen/large_padding"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-                android:textSize="18sp"
+                android:textSize="@dimen/title_size"
                 tools:text="Movie Title" />
 
             <TextView
@@ -37,19 +37,18 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:paddingBottom="4dp"
-                android:paddingTop="0dp"
+                android:paddingBottom="@dimen/medium_padding"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#999"
+                android:textColor="@color/nonFocus"
                 tools:text="Release June 25, 2017" />
 
             <TextView
-                android:lineSpacingMultiplier="1.2"
                 android:id="@+id/overview_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:paddingTop="8dp"
+                android:lineSpacingMultiplier="1.2"
+                android:paddingBottom="@dimen/large_padding"
+                android:paddingTop="@dimen/medium_padding"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 tools:text="Lorem ipsum dolor" />
 
@@ -60,10 +59,9 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:paddingBottom="8dp"
-                android:paddingTop="0dp"
+                android:paddingBottom="@dimen/medium_padding"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="#999"
+                android:textColor="@color/nonFocus"
                 tools:text="Rating 5.8" />
 
         </LinearLayout>

@@ -2,6 +2,10 @@
 <resources>
 
     <dimen name="movie_item_offset">4dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="large_padding">8dp</dimen>
+
+    <dimen name="title_size">18sp</dimen>
 
     <integer name="movies_columns">2</integer>
 
