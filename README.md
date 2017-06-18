@@ -1,4 +1,5 @@
 # MovieDb-udacity-fasttrack
-This project is for Android Udacity Fast-track Program
-
-You can put with you API_KEY on gradle app file. Just look at file OK.
+===
+## TODO
+- [ ] You can use this project with change the API_KEY on build app gradle file
+- [ ] Just find it OK
