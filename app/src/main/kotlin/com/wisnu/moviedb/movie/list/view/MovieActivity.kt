@@ -54,18 +54,31 @@ class MovieActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorResumeNext(Function { Observable.just(null) })
             }
-            .doOnNext { endlessScrollListener.loading = true }
+            .doOnNext { showLoading() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
                     Log.d(TAG, "doOnNext onLoadMore")
 
                     getMovieAdapter().addMovieList(it.results, movies_grid)
-                    endlessScrollListener.loading = false
+                    hideLoading()
                 },
-                { Log.d(TAG, "onError onLoadMore") },
+                {
+                    Log.d(TAG, "onError onLoadMore")
+                    hideLoading()
+                },
                 { Log.d(TAG, "onComplete onLoadMore") }
             )
+    }
+
+    private fun showLoading() {
+        endlessScrollListener.loading = true
+        swipe_to_refresh.isRefreshing = true
+    }
+
+    private fun hideLoading() {
+        endlessScrollListener.loading = false
+        swipe_to_refresh.isRefreshing = false
     }
 
     private fun getMovieAdapter(): MoviesAdapter {
@@ -163,4 +176,5 @@ class MovieActivity : AppCompatActivity() {
                 { Log.d(TAG, "onComplete refreshMovie") }
             )
     }
+
 }
