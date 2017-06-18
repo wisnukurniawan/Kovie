@@ -12,10 +12,4 @@
         android:title="@string/sort_by_highest_rated"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/refresh_movie"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:title="@string/refresh"
-        app:showAsAction="ifRoom" />
-
 </menu>

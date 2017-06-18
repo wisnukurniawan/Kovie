@@ -7,6 +7,8 @@ import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout
 import com.wisnu.moviedb.R
 import com.wisnu.moviedb.di.MovieApplication
 import com.wisnu.moviedb.movie.detail.view.ItemOffsetDecoration
@@ -37,7 +39,23 @@ class MovieActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie_list)
 
         initMoviesLayoutManager()
+        initSwipeRefresh()
         showPopularMovies()
+    }
+
+    private fun initSwipeRefresh() {
+        Observable.just(true)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { RxSwipeRefreshLayout.refreshes(swipe_to_refresh) }
+            .map { refreshMovie() }
+            .subscribe(
+                {
+                    Log.d(TAG, "doOnNext initSwipeRefresh")
+                    hideLoading()
+                },
+                { Log.d(TAG, "onError refreshMovie") },
+                { Log.d(TAG, "onComplete initSwipeRefresh") }
+            )
     }
 
     private fun initMoviesLayoutManager() {
@@ -48,13 +66,14 @@ class MovieActivity : AppCompatActivity() {
 
     private fun onLoadMore() {
         Observable.just(true)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { showLoading() }
             .observeOn(Schedulers.io())
             .flatMap {
                 movieListPresenter.retrieveDiscoverMovies(recentSorting, getMovieAdapter().movieList)
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorResumeNext(Function { Observable.just(null) })
             }
-            .doOnNext { showLoading() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
@@ -79,6 +98,16 @@ class MovieActivity : AppCompatActivity() {
     private fun hideLoading() {
         endlessScrollListener.loading = false
         swipe_to_refresh.isRefreshing = false
+    }
+
+    private fun showMovie() {
+        view_no_movies.visibility = View.GONE
+        movies_grid.visibility = View.VISIBLE
+    }
+
+    private fun showNoMovie() {
+        view_no_movies.visibility = View.VISIBLE
+        movies_grid.visibility = View.GONE
     }
 
     private fun getMovieAdapter(): MoviesAdapter {
@@ -108,10 +137,6 @@ class MovieActivity : AppCompatActivity() {
                 showHighestRatedMovies()
                 recentSorting = MovieSorting.BY_HIGHEST_RATED
             }
-
-            R.id.refresh_movie -> {
-                refreshMovie()
-            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -131,8 +156,12 @@ class MovieActivity : AppCompatActivity() {
                     Log.d(TAG, "doOnNext showPopularMovies")
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    showMovie()
                 },
-                { Log.d(TAG, "onError showPopularMovies") },
+                {
+                    Log.d(TAG, "onError showPopularMovies")
+                    showNoMovie()
+                },
                 { Log.d(TAG, "onComplete showPopularMovies") }
             )
     }
@@ -151,8 +180,12 @@ class MovieActivity : AppCompatActivity() {
                     Log.d(TAG, "doOnNext showHighestRatedMovies")
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    showMovie()
                 },
-                { Log.d(TAG, "onError showHighestRatedMovies") },
+                {
+                    Log.d(TAG, "onError showHighestRatedMovies")
+                    showNoMovie()
+                },
                 { Log.d(TAG, "onComplete showHighestRatedMovies") }
             )
     }
@@ -171,8 +204,12 @@ class MovieActivity : AppCompatActivity() {
                     Log.d(TAG, "doOnNext refreshMovie")
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    showMovie()
                 },
-                { Log.d(TAG, "onError refreshMovie") },
+                {
+                    Log.d(TAG, "onError refreshMovie")
+                    showNoMovie()
+                },
                 { Log.d(TAG, "onComplete refreshMovie") }
             )
     }

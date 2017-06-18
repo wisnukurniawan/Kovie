@@ -4,4 +4,5 @@
     <string name="sort_by_popularity">Popular</string>
     <string name="sort_by_highest_rated">Highest-rated</string>
     <string name="refresh">Refresh</string>
+    <string name="movies_grid_no_movies">Oops, please try again :(</string>
 </resources>
