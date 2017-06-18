@@ -19,6 +19,13 @@ import com.wisnu.moviedb.movie.list.model.MovieDiscover
 class MoviesAdapter(val movieList: MutableList<MovieDiscover>,
                     val onItemMovieClicked: (MovieDiscover) -> Unit) : RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {
 
+    fun addMovieList(movieList: MutableList<MovieDiscover>, recyclerView: RecyclerView) {
+        this.movieList.addAll(movieList)
+
+        recyclerView.recycledViewPool.clear()
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return movieList.size
     }

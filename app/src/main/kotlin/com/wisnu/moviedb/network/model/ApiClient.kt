@@ -14,7 +14,7 @@ import retrofit2.http.Query
 interface ApiClient {
 
     @GET("discover/movie?language=id")
-    fun retrieveDiscoverMovies(@Query("sort_by") sortBy: String): Observable<MovieDiscoverResponse>
+    fun retrieveDiscoverMovies(@Query("sort_by") sortBy: String, @Query("page") page: Int?): Observable<MovieDiscoverResponse>
 
     @GET("movie/{id}?language=id")
     fun retrieveDetailMovie(@Path("id") movieId: Long): Observable<MovieDetail>

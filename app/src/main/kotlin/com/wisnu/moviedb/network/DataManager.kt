@@ -12,8 +12,8 @@ import io.reactivex.functions.Function
  */
 class DataManager(private val apiClient: ApiClient) {
 
-    fun retrieveDiscoverMovies(sortBy: String): Observable<MovieDiscoverResponse> {
-        return handleServerRequestError(apiClient.retrieveDiscoverMovies(sortBy))
+    fun retrieveDiscoverMovies(sortBy: String, page: Int?): Observable<MovieDiscoverResponse> {
+        return handleServerRequestError(apiClient.retrieveDiscoverMovies(sortBy, page))
     }
 
     private fun <T> handleServerRequestError(originalObservable: Observable<T>): Observable<T> {

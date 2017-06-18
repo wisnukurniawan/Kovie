@@ -22,20 +22,86 @@ import kotlinx.android.synthetic.main.activity_movie_list.*
 class MovieActivity : AppCompatActivity() {
 
     private val TAG = MovieActivity::class.java.simpleName
+
     private val movieListPresenter by lazy { MovieApplication.movieComponent.provideMovieListPresenter() }
+    private val endlessScrollListener: EndlessScrollListener by lazy {
+        EndlessScrollListener(
+            movies_grid.layoutManager as GridLayoutManager, { onLoadMore() }
+        )
+    }
+
     private var recentSorting = MovieSorting.BY_POPULARITY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_list)
 
-        initMoviesLayout()
+        initMoviesLayoutManager()
         showPopularMovies()
     }
 
-    private fun initMoviesLayout() {
+    private fun initMoviesLayoutManager() {
         movies_grid.addItemDecoration(ItemOffsetDecoration(resources.getDimensionPixelOffset(R.dimen.movie_item_offset)))
         movies_grid.layoutManager = GridLayoutManager(this, resources.getInteger(R.integer.movies_columns))
+        movies_grid.addOnScrollListener(endlessScrollListener)
+    }
+
+    private fun onLoadMore() {
+        Observable.just(true)
+            .observeOn(Schedulers.io())
+            .flatMap {
+                movieListPresenter.retrieveDiscoverMovies(recentSorting, getMovieAdapter().movieList)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorResumeNext(Function { Observable.just(null) })
+            }
+            .doOnNext { endlessScrollListener.loading = true }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    Log.d(TAG, "doOnNext onLoadMore")
+
+                    getMovieAdapter().addMovieList(it.results, movies_grid)
+                    endlessScrollListener.loading = false
+                },
+                { Log.d(TAG, "onError onLoadMore") },
+                { Log.d(TAG, "onComplete onLoadMore") }
+            )
+    }
+
+    private fun getMovieAdapter(): MoviesAdapter {
+        return movies_grid.adapter as MoviesAdapter
+    }
+
+    private fun onItemMovieClicked(movieDiscover: MovieDiscover) {
+        val intent = Intent(this, MovieDetailActivity::class.java)
+        intent.putExtra(MovieDetailActivity.MOVIE_ID, movieDiscover)
+        startActivity(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.sort_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        when (item?.itemId) {
+            R.id.sort_by_popularity -> {
+                showPopularMovies()
+                recentSorting = MovieSorting.BY_POPULARITY
+            }
+
+            R.id.sort_highest_rated -> {
+                showHighestRatedMovies()
+                recentSorting = MovieSorting.BY_HIGHEST_RATED
+            }
+
+            R.id.refresh_movie -> {
+                refreshMovie()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun showPopularMovies() {
@@ -76,38 +142,6 @@ class MovieActivity : AppCompatActivity() {
                 { Log.d(TAG, "onError showHighestRatedMovies") },
                 { Log.d(TAG, "onComplete showHighestRatedMovies") }
             )
-    }
-
-    private fun onItemMovieClicked(movieDiscover: MovieDiscover) {
-        val intent = Intent(this, MovieDetailActivity::class.java)
-        intent.putExtra(MovieDetailActivity.MOVIE_ID, movieDiscover)
-        startActivity(intent)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.sort_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
-        when (item?.itemId) {
-            R.id.sort_by_popularity -> {
-                showPopularMovies()
-                recentSorting = MovieSorting.BY_POPULARITY
-            }
-
-            R.id.sort_highest_rated -> {
-                showHighestRatedMovies()
-                recentSorting = MovieSorting.BY_HIGHEST_RATED
-            }
-
-            R.id.refresh_movie -> {
-                refreshMovie()
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 
     private fun refreshMovie() {
