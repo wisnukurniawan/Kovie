@@ -5,7 +5,7 @@ import android.support.annotation.StringDef
 /**
  * Created by wisnu on 17/06/2017.
  */
-class MoviePosterSize {
+class PosterSize {
 
     companion object {
         const val SIZE_1 = "w92"

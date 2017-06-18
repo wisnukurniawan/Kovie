@@ -10,10 +10,11 @@ data class MovieDiscover(val id: Long? = 0L,
                          val originalTitle: String? = "",
                          val overview: String? = "",
                          val releaseDate: String? = "",
-                         val voteAverage: Float? = 0f) : Serializable {
+                         val voteAverage: Float? = 0f,
+                         val popularity: String? = "") : Serializable {
 
     companion object {
-        val empty = MovieDiscover(null, null, null, null, null, null)
+        val empty = MovieDiscover(null, null, null, null, null, null, null)
     }
 
 }

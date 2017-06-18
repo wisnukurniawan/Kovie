@@ -7,9 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.wisnu.moviedb.R
-import com.wisnu.moviedb.base.model.MoviePosterSize
+import com.wisnu.moviedb.base.model.PosterSize
 import com.wisnu.moviedb.movie.list.model.MovieDiscover
 import kotlinx.android.synthetic.main.activity_movie_detail.*
+
 
 /**
  * Created by wisnu on 17/06/2017.
@@ -28,21 +29,46 @@ class MovieDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
 
+        initView()
+    }
+
+    private fun initView() {
+        initToolbar()
         showImageMovie()
+
         original_title_tv.text = movieDiscover?.originalTitle
-        overview_tv.text = movieDiscover?.overview
-        vote_average_tv.text = movieDiscover?.voteAverage.toString()
-        release_date_tv.text = movieDiscover?.releaseDate
+        overview_tv.text = getOverview()
+        vote_average_tv.text = getString(R.string.rating, movieDiscover?.voteAverage.toString())
+        release_date_tv.text = getString(R.string.release_date, movieDiscover?.releaseDate)
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(toolbar_detail)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        toolbar_detail.setNavigationOnClickListener { onBackPressed() }
+        collapsing_toolbar_layout.title = movieDiscover?.originalTitle
+        collapsing_toolbar_layout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent))
+        title = ""
     }
 
     private fun showImageMovie() {
         Glide
             .with(this)
-            .load(POSTER_IMAGE_BASE_URL + MoviePosterSize.SIZE_4 + movieDiscover?.posterPath)
+            .load(POSTER_IMAGE_BASE_URL + PosterSize.SIZE_4 + movieDiscover?.posterPath)
             .placeholder(ColorDrawable(ContextCompat.getColor(this, R.color.colorAccent)))
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .fitCenter()
             .into(poster_path_iv)
+    }
+
+    private fun getOverview(): String {
+        val overview = movieDiscover?.overview
+        return if (overview == "") {
+            "No description"
+        } else {
+            overview ?: ""
+        }
     }
 
 }

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="movie_item_offset">4dp</dimen>
     <dimen name="medium_padding">8dp</dimen>
-    <dimen name="large_padding">8dp</dimen>
+    <dimen name="large_padding">16dp</dimen>
 
     <dimen name="title_size">18sp</dimen>
+    <dimen name="rating_size">12sp</dimen>
 
     <integer name="movies_columns">2</integer>
 
+    <dimen name="collapsing_height">400dp</dimen>
 </resources>

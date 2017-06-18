@@ -38,9 +38,15 @@ class MovieActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_list)
 
+        initToolbar()
         initMoviesLayoutManager()
         initSwipeRefresh()
         showPopularMovies()
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(toolbar)
+        title = getString(R.string.main_title)
     }
 
     private fun initSwipeRefresh() {
