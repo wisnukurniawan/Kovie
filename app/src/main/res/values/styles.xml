@@ -8,7 +8,7 @@
 
     <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- buttons color -->
-        <item name="colorAccent" tools:ignore="PrivateResource">@color/accent_material_light</item>
+        <item name="colorAccent" tools:ignore="PrivateResource">@color/colorPrimary</item>
         <!-- title and message color -->
         <item name="android:textColorPrimary">@android:color/black</item>
         <!-- dialog background -->

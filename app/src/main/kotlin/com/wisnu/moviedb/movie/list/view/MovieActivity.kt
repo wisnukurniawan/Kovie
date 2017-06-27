@@ -131,7 +131,7 @@ class MovieActivity : NaviAppCompatActivity() {
         movies_grid.visibility = View.VISIBLE
     }
 
-    private fun showNoMovie() {
+    private fun hideMovie() {
         view_no_movies.visibility = View.VISIBLE
         movies_grid.visibility = View.GONE
     }
@@ -149,6 +149,11 @@ class MovieActivity : NaviAppCompatActivity() {
     private fun showMoviesBySorting(sortState: String) {
         RxNavi
             .observe(naviComponent, Event.CREATE)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                hideMovie()
+                showLoading()
+            }
             .observeOn(Schedulers.io())
             .flatMap {
                 movieListPresenter.retrieveDiscoverMovies(sortState)
@@ -162,11 +167,12 @@ class MovieActivity : NaviAppCompatActivity() {
                     Log.d(TAG, "doOnNext showMoviesBySorting")
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    hideLoading()
                     showMovie()
                 },
                 {
                     Log.e(TAG, "onError showMoviesBySorting", it)
-                    showNoMovie()
+                    hideMovie()
                 },
                 { Log.d(TAG, "onComplete showMoviesBySorting") }
             )
@@ -192,7 +198,7 @@ class MovieActivity : NaviAppCompatActivity() {
                 },
                 {
                     Log.e(TAG, "onError refreshMovie", it)
-                    showNoMovie()
+                    hideMovie()
                 },
                 { Log.d(TAG, "onComplete refreshMovie") }
             )
@@ -202,9 +208,11 @@ class MovieActivity : NaviAppCompatActivity() {
         RxNavi
             .observe(naviComponent, Event.CREATE)
             .flatMap { movieListPresenter.listenSortingEvent() }
-            .map { showMoviesBySorting(preference.getSortState()) }
             .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
-            .subscribe { recentSorting = preference.getSortState() }
+            .subscribe {
+                showMoviesBySorting(preference.getSortState())
+                recentSorting = preference.getSortState()
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
