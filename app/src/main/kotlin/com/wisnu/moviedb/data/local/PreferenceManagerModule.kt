@@ -1,7 +1,7 @@
-package com.wisnu.moviedb.local
+package com.wisnu.moviedb.data.local
 
 import android.content.Context
-import com.wisnu.moviedb.local.preference.PreferenceManager
+import com.wisnu.moviedb.data.local.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 

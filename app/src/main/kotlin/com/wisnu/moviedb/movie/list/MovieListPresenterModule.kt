@@ -1,7 +1,7 @@
 package com.wisnu.moviedb.movie.list
 
+import com.wisnu.moviedb.data.network.DataManager
 import com.wisnu.moviedb.movie.list.presenter.MovieListPresenter
-import com.wisnu.moviedb.network.DataManager
 import dagger.Module
 import dagger.Provides
 

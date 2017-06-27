@@ -1,4 +1,4 @@
-package com.wisnu.moviedb.local.preference
+package com.wisnu.moviedb.data.local.preference
 
 import android.content.Context
 import android.content.SharedPreferences

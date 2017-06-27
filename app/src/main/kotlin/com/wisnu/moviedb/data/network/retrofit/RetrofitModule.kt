@@ -1,10 +1,10 @@
-package com.wisnu.moviedb.network.retrofit
+package com.wisnu.moviedb.data.network.retrofit
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.wisnu.moviedb.BuildConfig
-import com.wisnu.moviedb.network.model.ApiClient
+import com.wisnu.moviedb.data.network.model.ApiClient
 import dagger.Module
 import dagger.Provides
 import io.reactivex.schedulers.Schedulers

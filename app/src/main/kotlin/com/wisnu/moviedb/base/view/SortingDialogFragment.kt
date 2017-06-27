@@ -1,4 +1,4 @@
-package com.wisnu.moviedb.costumview
+package com.wisnu.moviedb.base.view
 
 import android.app.Dialog
 import android.os.Bundle

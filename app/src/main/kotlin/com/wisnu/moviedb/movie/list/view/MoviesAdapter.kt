@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.wisnu.moviedb.R
 import com.wisnu.moviedb.base.model.PosterSize
-import com.wisnu.moviedb.costumview.MovieImageView
+import com.wisnu.moviedb.base.view.MovieImageView
 import com.wisnu.moviedb.movie.list.model.MovieDiscover
 
 /**

@@ -1,8 +1,8 @@
-package com.wisnu.moviedb.network
+package com.wisnu.moviedb.data.network
 
+import com.wisnu.moviedb.data.network.model.ApiClient
+import com.wisnu.moviedb.data.network.model.UnknownError
 import com.wisnu.moviedb.movie.list.model.MovieDiscoverResponse
-import com.wisnu.moviedb.network.model.ApiClient
-import com.wisnu.moviedb.network.model.UnknownError
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 

@@ -2,9 +2,9 @@ package com.wisnu.moviedb.movie.list.presenter
 
 import com.wisnu.moviedb.base.model.SortingEvent
 import com.wisnu.moviedb.base.utils.RxBus
+import com.wisnu.moviedb.data.network.DataManager
 import com.wisnu.moviedb.movie.list.model.MovieDiscover
 import com.wisnu.moviedb.movie.list.model.MovieDiscoverResponse
-import com.wisnu.moviedb.network.DataManager
 import io.reactivex.Observable
 
 /**

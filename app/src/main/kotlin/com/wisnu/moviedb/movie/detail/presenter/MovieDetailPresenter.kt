@@ -1,6 +1,7 @@
 package com.wisnu.moviedb.movie.detail.presenter
 
-import com.wisnu.moviedb.network.DataManager
+import com.wisnu.moviedb.data.network.DataManager
+
 
 /**
  * Created by wisnu on 17/06/2017.

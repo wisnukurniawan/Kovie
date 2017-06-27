@@ -1,4 +1,4 @@
-package com.wisnu.moviedb.network.model
+package com.wisnu.moviedb.data.network.model
 
 /**
  * Created by wisnu on 13/06/2017.

@@ -1,15 +1,15 @@
 package com.wisnu.moviedb.di
 
 import android.content.Context
-import com.wisnu.moviedb.local.PreferenceManagerModule
-import com.wisnu.moviedb.local.preference.PreferenceManager
+import com.wisnu.moviedb.data.local.PreferenceManagerModule
+import com.wisnu.moviedb.data.local.preference.PreferenceManager
+import com.wisnu.moviedb.data.network.DataManager
+import com.wisnu.moviedb.data.network.DataManagerModule
+import com.wisnu.moviedb.data.network.retrofit.RetrofitModule
 import com.wisnu.moviedb.movie.detail.MovieDetailPresenterModule
 import com.wisnu.moviedb.movie.detail.presenter.MovieDetailPresenter
 import com.wisnu.moviedb.movie.list.MovieListPresenterModule
 import com.wisnu.moviedb.movie.list.presenter.MovieListPresenter
-import com.wisnu.moviedb.network.DataManager
-import com.wisnu.moviedb.network.DataManagerModule
-import com.wisnu.moviedb.network.retrofit.RetrofitModule
 import dagger.Component
 import javax.inject.Singleton
 

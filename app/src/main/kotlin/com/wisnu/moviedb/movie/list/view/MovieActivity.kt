@@ -13,7 +13,7 @@ import com.trello.navi2.NaviComponent
 import com.trello.navi2.component.support.NaviAppCompatActivity
 import com.trello.navi2.rx.RxNavi
 import com.wisnu.moviedb.R
-import com.wisnu.moviedb.costumview.SortingDialogFragment
+import com.wisnu.moviedb.base.view.SortingDialogFragment
 import com.wisnu.moviedb.di.MovieApplication
 import com.wisnu.moviedb.movie.detail.view.ItemOffsetDecoration
 import com.wisnu.moviedb.movie.detail.view.MovieDetailActivity

@@ -1,4 +1,4 @@
-package com.wisnu.moviedb.network.model
+package com.wisnu.moviedb.data.network.model
 
 import com.wisnu.moviedb.movie.detail.model.MovieDetail
 import com.wisnu.moviedb.movie.list.model.MovieDiscoverResponse

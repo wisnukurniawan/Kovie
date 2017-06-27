@@ -1,6 +1,6 @@
-package com.wisnu.moviedb.network
+package com.wisnu.moviedb.data.network
 
-import com.wisnu.moviedb.network.model.ApiClient
+import com.wisnu.moviedb.data.network.model.ApiClient
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
