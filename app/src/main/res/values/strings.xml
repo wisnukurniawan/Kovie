@@ -8,4 +8,10 @@
     <string name="main_title">The Movie</string>
     <string name="release_date">Release date %1$s</string>
     <string name="rating">Rating %1$s</string>
+    <string name="action_sort">Sort by…</string>
+    <string name="action_cancel">Cancel</string>
+
+    <string name="sort_dialog_title">Sort by</string>
+    <string name="sort_dialog_most_popular">most popular</string>
+    <string name="sort_dialog_highest_rated">highest rated</string>
 </resources>

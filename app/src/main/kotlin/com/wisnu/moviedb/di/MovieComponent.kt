@@ -1,6 +1,8 @@
 package com.wisnu.moviedb.di
 
 import android.content.Context
+import com.wisnu.moviedb.local.PreferenceManagerModule
+import com.wisnu.moviedb.local.preference.PreferenceManager
 import com.wisnu.moviedb.movie.detail.MovieDetailPresenterModule
 import com.wisnu.moviedb.movie.detail.presenter.MovieDetailPresenter
 import com.wisnu.moviedb.movie.list.MovieListPresenterModule
@@ -20,7 +22,8 @@ import javax.inject.Singleton
     RetrofitModule::class,
     DataManagerModule::class,
     MovieListPresenterModule::class,
-    MovieDetailPresenterModule::class
+    MovieDetailPresenterModule::class,
+    PreferenceManagerModule::class
 ))
 interface MovieComponent {
 
@@ -28,5 +31,6 @@ interface MovieComponent {
     fun provideDataManager(): DataManager
     fun provideMovieListPresenter(): MovieListPresenter
     fun provideMovieDetailPresenter(): MovieDetailPresenter
+    fun providePreferenceManager(): PreferenceManager
 
 }

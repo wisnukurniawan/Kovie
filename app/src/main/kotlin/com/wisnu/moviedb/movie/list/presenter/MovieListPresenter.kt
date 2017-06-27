@@ -1,5 +1,7 @@
 package com.wisnu.moviedb.movie.list.presenter
 
+import com.wisnu.moviedb.base.model.SortingEvent
+import com.wisnu.moviedb.base.utils.RxBus
 import com.wisnu.moviedb.movie.list.model.MovieDiscover
 import com.wisnu.moviedb.movie.list.model.MovieDiscoverResponse
 import com.wisnu.moviedb.network.DataManager
@@ -26,6 +28,10 @@ class MovieListPresenter(private val dataManager: DataManager) {
     private fun getCurrentPage(movies: MutableList<MovieDiscover>): Int {
         val currentPage = (movies.size - 1) / PAGE_SIZE + 1
         return currentPage
+    }
+
+    fun listenSortingEvent(): Observable<SortingEvent> {
+        return RxBus.registerObservable<SortingEvent>()
     }
 
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_sort_by_labels">
+        <item>@string/sort_dialog_most_popular</item>
+        <item>@string/sort_dialog_highest_rated</item>
+    </string-array>
+
+</resources>

@@ -68,7 +68,7 @@ class MoviesAdapter(val movieList: MutableList<MovieDiscover>,
         fun bindView(movie: MovieDiscover) {
             Glide
                 .with(itemView.context)
-                .load(POSTER_IMAGE_BASE_URL +  PosterSize.SIZE_2 + movie.posterPath)
+                .load(POSTER_IMAGE_BASE_URL + PosterSize.SIZE_2 + movie.posterPath)
                 .placeholder(ColorDrawable(ContextCompat.getColor(itemView.context, R.color.colorAccent)))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .fitCenter()

@@ -2,6 +2,7 @@ package com.wisnu.moviedb.movie.list.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout
 import com.wisnu.moviedb.R
+import com.wisnu.moviedb.costumview.SortingDialogFragment
 import com.wisnu.moviedb.di.MovieApplication
 import com.wisnu.moviedb.movie.detail.view.ItemOffsetDecoration
 import com.wisnu.moviedb.movie.detail.view.MovieDetailActivity
@@ -25,6 +27,7 @@ class MovieActivity : AppCompatActivity() {
 
     private val TAG = MovieActivity::class.java.simpleName
 
+    private val preference by lazy { MovieApplication.movieComponent.providePreferenceManager() }
     private val movieListPresenter by lazy { MovieApplication.movieComponent.provideMovieListPresenter() }
     private val endlessScrollListener: EndlessScrollListener by lazy {
         EndlessScrollListener(
@@ -41,7 +44,8 @@ class MovieActivity : AppCompatActivity() {
         initToolbar()
         initMoviesLayoutManager()
         initSwipeRefresh()
-        showPopularMovies()
+        showMoviesBySorting(MovieSorting.BY_POPULARITY)
+        updateMovieBySorting()
     }
 
     private fun initToolbar() {
@@ -127,72 +131,39 @@ class MovieActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.sort_menu, menu)
+        menuInflater.inflate(R.menu.sort_menu_fragment, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
         when (item?.itemId) {
-            R.id.sort_by_popularity -> {
-                showPopularMovies()
-                recentSorting = MovieSorting.BY_POPULARITY
-            }
-
-            R.id.sort_highest_rated -> {
-                showHighestRatedMovies()
-                recentSorting = MovieSorting.BY_HIGHEST_RATED
-            }
+            R.id.action_show_sort_by_dialog -> showSortDialog()
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showPopularMovies() {
+    private fun showMoviesBySorting(sortState: String) {
         Observable.just(true)
             .observeOn(Schedulers.io())
             .flatMap {
-                movieListPresenter.retrieveDiscoverMovies(MovieSorting.BY_POPULARITY)
+                movieListPresenter.retrieveDiscoverMovies(sortState)
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorResumeNext(Function { Observable.just(null) })
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.d(TAG, "doOnNext showPopularMovies")
+                    Log.d(TAG, "doOnNext showMoviesBySorting")
 
                     movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
                     showMovie()
                 },
                 {
-                    Log.d(TAG, "onError showPopularMovies")
+                    Log.d(TAG, "onError showMoviesBySorting")
                     showNoMovie()
                 },
-                { Log.d(TAG, "onComplete showPopularMovies") }
-            )
-    }
-
-    private fun showHighestRatedMovies() {
-        Observable.just(true)
-            .observeOn(Schedulers.io())
-            .flatMap {
-                movieListPresenter.retrieveDiscoverMovies(MovieSorting.BY_HIGHEST_RATED)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorResumeNext(Function { Observable.just(null) })
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    Log.d(TAG, "doOnNext showHighestRatedMovies")
-
-                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
-                    showMovie()
-                },
-                {
-                    Log.d(TAG, "onError showHighestRatedMovies")
-                    showNoMovie()
-                },
-                { Log.d(TAG, "onComplete showHighestRatedMovies") }
+                { Log.d(TAG, "onComplete showMoviesBySorting") }
             )
     }
 
@@ -218,6 +189,19 @@ class MovieActivity : AppCompatActivity() {
                 },
                 { Log.d(TAG, "onComplete refreshMovie") }
             )
+    }
+
+    private fun showSortDialog() {
+        val sortingDialogFragment: DialogFragment = SortingDialogFragment()
+        sortingDialogFragment.show(supportFragmentManager, SortingDialogFragment.TAG)
+    }
+
+    private fun updateMovieBySorting() {
+        Observable
+            .just(true)
+            .flatMap { movieListPresenter.listenSortingEvent() }
+            .map { showMoviesBySorting(preference.getSortState()) }
+            .subscribe { recentSorting = preference.getSortState() }
     }
 
 }
