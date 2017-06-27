@@ -28,7 +28,6 @@ import kotlinx.android.synthetic.main.activity_movie_list.*
 class MovieActivity : NaviAppCompatActivity() {
 
     private val TAG = MovieActivity::class.java.simpleName
-
     private val naviComponent: NaviComponent = this
 
     private val preference by lazy { MovieApplication.movieComponent.providePreferenceManager() }
@@ -43,9 +42,8 @@ class MovieActivity : NaviAppCompatActivity() {
 
     init {
         initLayout()
-        initSwipeRefresh()
-        showMoviesBySorting(MovieSorting.BY_POPULARITY)
         initSortingEvent()
+        initSwipeRefresh()
     }
 
     private fun initLayout() {
@@ -56,7 +54,9 @@ class MovieActivity : NaviAppCompatActivity() {
             .subscribe {
                 setContentView(R.layout.activity_movie_list)
                 initToolbar()
-                initMoviesLayoutManager()
+                initLayoutManager()
+
+                showMoviesBySorting(MovieSorting.BY_POPULARITY)
             }
     }
 
@@ -65,10 +65,53 @@ class MovieActivity : NaviAppCompatActivity() {
         title = getString(R.string.main_title)
     }
 
-    private fun initMoviesLayoutManager() {
+    private fun initLayoutManager() {
         movies_grid.addItemDecoration(ItemOffsetDecoration(resources.getDimensionPixelOffset(R.dimen.movie_item_offset)))
         movies_grid.layoutManager = GridLayoutManager(this, resources.getInteger(R.integer.movies_columns))
         movies_grid.addOnScrollListener(endlessScrollListener)
+    }
+
+    private fun showMoviesBySorting(sortState: String) {
+        Observable.just(true)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                hideMovie()
+                showLoading()
+            }
+            .observeOn(Schedulers.io())
+            .flatMap {
+                movieListPresenter.retrieveDiscoverMovies(sortState)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorResumeNext(Function { Observable.just(null) })
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
+            .subscribe(
+                {
+                    Log.d(TAG, "doOnNext showMoviesBySorting")
+
+                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    showMovie()
+                    hideLoading()
+                },
+                {
+                    Log.e(TAG, "onError showMoviesBySorting", it)
+                    hideMovie()
+                    hideLoading()
+                },
+                { Log.d(TAG, "onComplete showMoviesBySorting") }
+            )
+    }
+
+    private fun initSortingEvent() {
+        RxNavi
+            .observe(naviComponent, Event.CREATE)
+            .flatMap { movieListPresenter.listenSortingEvent() }
+            .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
+            .subscribe {
+                showMoviesBySorting(preference.getSortState())
+                recentSorting = preference.getSortState()
+            }
     }
 
     private fun initSwipeRefresh() {
@@ -76,21 +119,33 @@ class MovieActivity : NaviAppCompatActivity() {
             .observe(naviComponent, Event.CREATE)
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap { RxSwipeRefreshLayout.refreshes(swipe_to_refresh) }
-            .map { refreshMovie() }
+            .observeOn(Schedulers.io())
+            .flatMap {
+                movieListPresenter.retrieveDiscoverMovies(recentSorting)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorResumeNext(Function { Observable.just(null) })
+            }
+            .observeOn(AndroidSchedulers.mainThread())
             .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
             .subscribe(
                 {
-                    Log.d(TAG, "doOnNext initSwipeRefresh")
+                    Log.d(TAG, "doOnNext refreshMovie")
+
+                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
+                    showMovie()
                     hideLoading()
                 },
-                { Log.e(TAG, "onError refreshMovie", it) },
-                { Log.d(TAG, "onComplete initSwipeRefresh") }
+                {
+                    Log.e(TAG, "onError refreshMovie", it)
+                    hideMovie()
+                    hideLoading()
+                },
+                { Log.d(TAG, "onComplete refreshMovie") }
             )
     }
 
     private fun onLoadMore() {
-        RxNavi
-            .observe(naviComponent, Event.CREATE)
+        Observable.just(true)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { showLoading() }
             .observeOn(Schedulers.io())
@@ -144,75 +199,6 @@ class MovieActivity : NaviAppCompatActivity() {
         val intent = Intent(this, MovieDetailActivity::class.java)
         intent.putExtra(MovieDetailActivity.MOVIE_ID, movieDiscover)
         startActivity(intent)
-    }
-
-    private fun showMoviesBySorting(sortState: String) {
-        RxNavi
-            .observe(naviComponent, Event.CREATE)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                hideMovie()
-                showLoading()
-            }
-            .observeOn(Schedulers.io())
-            .flatMap {
-                movieListPresenter.retrieveDiscoverMovies(sortState)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorResumeNext(Function { Observable.just(null) })
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
-            .subscribe(
-                {
-                    Log.d(TAG, "doOnNext showMoviesBySorting")
-
-                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
-                    hideLoading()
-                    showMovie()
-                },
-                {
-                    Log.e(TAG, "onError showMoviesBySorting", it)
-                    hideMovie()
-                },
-                { Log.d(TAG, "onComplete showMoviesBySorting") }
-            )
-    }
-
-    private fun refreshMovie() {
-        RxNavi
-            .observe(naviComponent, Event.CREATE)
-            .observeOn(Schedulers.io())
-            .flatMap {
-                movieListPresenter.retrieveDiscoverMovies(recentSorting)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorResumeNext(Function { Observable.just(null) })
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
-            .subscribe(
-                {
-                    Log.d(TAG, "doOnNext refreshMovie")
-
-                    movies_grid.adapter = MoviesAdapter(it.results, { onItemMovieClicked(it) })
-                    showMovie()
-                },
-                {
-                    Log.e(TAG, "onError refreshMovie", it)
-                    hideMovie()
-                },
-                { Log.d(TAG, "onComplete refreshMovie") }
-            )
-    }
-
-    private fun initSortingEvent() {
-        RxNavi
-            .observe(naviComponent, Event.CREATE)
-            .flatMap { movieListPresenter.listenSortingEvent() }
-            .takeUntil(RxNavi.observe(naviComponent, Event.DESTROY))
-            .subscribe {
-                showMoviesBySorting(preference.getSortState())
-                recentSorting = preference.getSortState()
-            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
